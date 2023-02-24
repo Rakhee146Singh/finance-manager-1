@@ -1,7 +1,9 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\v1\AuthController;
+use App\Http\Controllers\v1\CompOffRequestController;
+use App\Http\Controllers\v1\ExpenceRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+Route::prefix('v1')->group(function () {
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('logout', [AuthController::class, 'logout']);
+        Route::controller(CompOffRequestController::class)->prefix('compoff')->group(function () {
+            Route::post('list',  'list');
+            Route::post('create', 'create');
+            Route::get('view/{id}',  'view');
+            Route::post('update/{id}', 'update');
+            Route::post('delete/{id}', 'delete');
+            Route::post('approval/{id}', 'approval');
+        });
+        Route::controller(ExpenceRequestController::class)->prefix('expence')->group(function () {
+            Route::post('list',  'list');
+            Route::post('create', 'create');
+            Route::get('view/{id}',  'view');
+            Route::post('update/{id}', 'update');
+            Route::post('delete/{id}', 'delete');
+            Route::post('approval/{id}', 'approval');
+        });
+    });
 });
