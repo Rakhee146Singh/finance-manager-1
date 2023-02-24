@@ -25,7 +25,7 @@ PHP Version:8.1.13
 
 # Delete -Delete Compoff
 
-2.Expence
+2.Expence -Use Relationship
 
 # List -With Pagination ,Searching,Sorting
 
