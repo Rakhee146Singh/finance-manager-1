@@ -11,7 +11,7 @@ class CompOffRequestController extends Controller
     /**
      * API of List CompOff
      *
-     *@param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request  $request
      *@return $compoff
      */
     public function list(Request $request)

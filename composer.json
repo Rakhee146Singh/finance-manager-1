@@ -32,6 +32,7 @@
             "Tests\\": "tests/"
         },
         "files": ["app/Http/Helpers/APIResponse.php"]
+
     },
     "scripts": {
         "post-autoload-dump": [

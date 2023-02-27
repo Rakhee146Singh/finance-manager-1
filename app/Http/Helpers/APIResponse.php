@@ -9,7 +9,7 @@
 /**
  * Return success response
  *
- * @param int    $status
+ *  @param int    $status
  * @param string $message
  * @param array  $data
  */

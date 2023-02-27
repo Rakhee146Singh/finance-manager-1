@@ -12,7 +12,7 @@ class AuthController extends Controller
     /**
      * API of User registration
      *
-     * @param  \Illuminate\Http\Request  $request
+     *  @param  \Illuminate\Http\Request  $request
      * @return $token
      */
     public function register(Request $request)
