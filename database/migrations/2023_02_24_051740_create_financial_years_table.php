@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('financial_years', function (Blueprint $table) {
             $table->uuid('id', 36)->primary();
-            $table->string('name', 51);
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password', 251);
+            $table->string('year', 51);
+            $table->dateTime('start_date');
+            $table->dateTime('end_date');
+            $table->boolean('is_active')->default(false);
             $table->timestamps();
             $table->softDeletes();
-            $table->rememberToken();
             $table->char('created_by', 36)->nullable();
             $table->char('updated_by', 36)->nullable();
             $table->char('deleted_by', 36)->nullable();
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('financial_years');
     }
 };
