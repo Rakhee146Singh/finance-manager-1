@@ -3,29 +3,30 @@
 namespace App\Http\Controllers\V1;
 
 use Illuminate\Http\Request;
-use App\Models\CompOffRequest;
 use App\Http\Controllers\Controller;
+use App\Models\ExpenseRequest;
 
-class CompOffRequestController extends Controller
+class ExpenseRequestController extends Controller
 {
     /**
-     * API of List CompOff
+     * API of List Expence
      *
-     *@param  \Illuminate\Http\Request  $request
-     *@return $compoff
+     * @param  \Illuminate\Http\Request  $request
+     * @return $expence
      */
     public function list(Request $request)
     {
+        //validation
         $this->validate($request, [
             'page'          => 'nullable|integer',
             'perPage'       => 'nullable|integer',
             'search'        => 'nullable',
             'sort_field'    => 'nullable',
             'sort_order'    => 'nullable|in:asc,desc',
-            'date'          => 'nullable|date',
+            'date'          => 'nullable',
         ]);
 
-        $query = CompOffRequest::query();
+        $query = ExpenseRequest::query();
 
         if ($request->search) {
             $query = $query->where('description', 'like', "%$request->search%");
@@ -48,38 +49,39 @@ class CompOffRequestController extends Controller
         }
 
         /* Get records */
-        $compoff = $query->get();
+        $expence = $query->get();
 
         $data = [
             'count' => $count,
-            'data'  => $compoff
+            'data'  => $expence
         ];
 
-        return ok('Compoff list', $data);
+        return ok('Expence list', $data);
     }
 
     /**
-     * API of Create Compoff
+     * API of Create Expence
      *
-     *@param  \Illuminate\Http\Request  $request
-     *@return $compoff
+     * @param  \Illuminate\Http\Request  $request
+     * @return $expence
      */
     public function create(Request $request)
     {
         $this->validate($request, [
             'financial_year_id'     => 'required|string|exists:financial_years,id',
-            'user_id'               => 'required|string|exists:users,id',
             'date'                  => 'required|date',
+            'amount'                => 'required|numeric',
+            'attachment'            => 'nullable|mimes:jpg,bmp,png,pdf',
             'description'           => 'nullable|string|max:551',
+            'is_active'             => 'nullable|boolean'
         ]);
 
-        $compoff = CompOffRequest::create($request->only('financial_year_id', 'user_id', 'date', 'description'));
-
-        return ok('Compoff created successfully!', $compoff);
+        $expence = ExpenseRequest::create($request->only('financial_year_id', 'date', 'amount', 'attachment', 'description'));
+        return ok('Expence created successfully', $expence);
     }
 
     /**
-     * API of Update Compoff
+     * API of Update Expence
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  $id
@@ -88,41 +90,42 @@ class CompOffRequestController extends Controller
     {
         $this->validate($request, [
             'financial_year_id'     => 'required|string|exists:financial_years,id',
-            'user_id'               => 'required|string|exists:users,id',
             'date'                  => 'required|date',
+            'amount'                => 'required|numeric',
+            'attachment'            => 'nullable|mimes:jpg,bmp,png,pdf',
             'description'           => 'nullable|string|max:551',
+            'is_active'             => 'nullable|boolean'
         ]);
-
-        $compoff = CompOffRequest::findOrFail($id);
-        $compoff->update($request->only('financial_year_id', 'user_id', 'date', 'description'));
-
-        return ok('Compoff updated successfully!', $compoff);
+        $expence = ExpenseRequest::findOrFail($id);
+        $expence->update($request->only('financial_year_id', 'date', 'amount', 'attachment', 'description'));
+        return ok('Expence updated successfully', $expence);
     }
 
     /**
-     * API of get perticuler Compoff details
+     * API of get perticuler Expence details
      *
      * @param  $id
-     * @return $compoff
+     * @return $expence
      */
     public function get($id)
     {
-        $compoff = CompOffRequest::with(['user'])->findOrFail($id);
+        $expence = ExpenseRequest::findOrFail($id);
 
-        return ok('Comp off get successfully', $compoff);
+        return ok('Expence retrieved successfully', $expence);
     }
 
     /**
-     * API of Delete Compoff
+     * API of Delete Expense
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  $id
      */
     public function delete($id)
     {
-        CompOffRequest::findOrFail($id)->delete();
+        $expence = ExpenseRequest::findOrFail($id);
+        $expence->delete();
 
-        return ok('Compoff deleted successfully');
+        return ok('Expence deleted successfully');
     }
 
     /**
@@ -133,17 +136,14 @@ class CompOffRequestController extends Controller
     public function approval($id, Request $request)
     {
         $this->validate($request, [
-            'is_fullday'            => 'nullable|boolean',
-            'is_approved'           => 'nullable|boolean',
-            'approval_status'       => 'nullable|in:A,R',
-            'approval_by'           => 'nullable|string|exists:users,id',
+            'is_approved'       => 'required|boolean',
+            'approval_status'   => 'required|in:P,U,PP',
+            'approval_by'       => 'required|string|exists:users,id',
         ]);
 
-        $compoff = CompOffRequest::findOrFail($id);
-        $compoff->update($request->only('approval_status', 'approval_by', 'is_fullday') + [
-            'is_approved'   => $request->approval_status == 'A' ? true : false
-        ]);
+        $compoff = ExpenseRequest::findOrFail($id);
+        $compoff->update($request->only('is_approved', 'approval_status', 'approval_by'));
 
-        return ok('Compoff updated successfully', $compoff);
+        return ok('Expence updated Successfully');
     }
 }

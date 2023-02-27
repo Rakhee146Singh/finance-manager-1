@@ -13,5 +13,6 @@ class FinancialYearSeeder extends Seeder
      */
     public function run(): void
     {
+        \App\Models\FinancialYear::factory(10)->create();
     }
 }

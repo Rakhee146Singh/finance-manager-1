@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->char('created_by', 36)->nullable();
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->char('updated_by', 36)->nullable();
-            $table->foreign('updated_by')->references('id')->on('users');
-            $table->char('deleted_by', 36)->nullable();
-            $table->foreign('deleted_by')->references('id')->on('users');
+            // $table->char('created_by', 36)->nullable();
+            // $table->foreign('created_by')->references('id')->on('users');
+            // $table->char('updated_by', 36)->nullable();
+            // $table->foreign('updated_by')->references('id')->on('users');
+            // $table->char('deleted_by', 36)->nullable();
+            // $table->foreign('deleted_by')->references('id')->on('users');
         });
     }
 

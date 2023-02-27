@@ -20,6 +20,9 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
             $table->rememberToken();
+            $table->char('created_by', 36)->nullable();
+            $table->char('updated_by', 36)->nullable();
+            $table->char('deleted_by', 36)->nullable();
         });
     }
 

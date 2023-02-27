@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\v1;
+namespace App\Http\Controllers\V1;
 
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -19,25 +19,22 @@ class AuthController extends Controller
     {
         //validation
         $request->validate([
-            'name' => 'required',
-            'email'      => 'required|email',
-            'password'   => 'required',
+            'name'      => 'required|string|max:51',
+            'email'     => 'required|email|unique:users,email|max:255',
+            'password'  => 'required|max:255',
         ]);
-        if (User::where('email', $request->email)->first()) {
-            return response([
-                'message' => 'Email Already exists',
-                'status'  => 'failed'
-            ], 200);
-        }
-        $request['password'] = Hash::make($request->password);
-        $user = User::create($request->only('name', 'email', 'password'));
-        $token = $user->createToken($request->email)->plainTextToken;
-        return response([
-            'token'   => $token,
-            'message' => 'User Register Succesfully',
-            'status'  => 'Success'
-        ], 201);
+
+        $user = User::create($request->only('name', 'email') + [
+            'password' => Hash::make($request->password)
+        ]);
+        // $token = $user->createToken($request->email)->plainTextToken;
+        $data = [
+            'user'  => $user
+        ];
+
+        return ok("User registered successfully!", $data);
     }
+
     /**
      * API of User login
      *
@@ -46,37 +43,37 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        //validation
         $request->validate([
             'email'    => 'required|email',
             'password' => 'required',
         ]);
+
         $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return error("User with this email is not found!");
+        }
         if ($user && Hash::check($request->password, $user->password)) {
             $token = $user->createToken($request->email)->plainTextToken;
-            return response([
-                'token'   => $token,
-                'message' => 'User Logged in Succesfully',
-                'status'  => 'Success'
-            ], 201);
+
+            $data = [
+                'token' => $token,
+                'user'  => $user
+            ];
+            return ok('User Logged in Succesfully', $data);
         } else {
-            return response([
-                'message' => 'failed',
-                'status'  => 'Failed'
-            ], 401);
+            return error("Password is incorrect");
         }
     }
+
     /**
      * API of User Logout
      *
      * @param  \Illuminate\Http\Request  $request
      */
-    public function logout(Request $request)
+    public function logout()
     {
-        $request->user()->currentAccessToken()->delete();
-        return response([
-            'message' => 'Logout',
-            'status'  => 'Success'
-        ], 200);
+        auth()->user()->currentAccessToken()->delete();
+
+        return ok("Logged out successfully!");
     }
 }

@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('expence_request_users', function (Blueprint $table) {
-            $table->char('expence_request_id', 36);
-            $table->foreign('expence_request_id')->references('id')->on('expence_requests');
+        Schema::create('expense_request_users', function (Blueprint $table) {
+            $table->char('expense_request_id', 36);
             $table->char('user_id', 36);
-            $table->foreign('user_id')->references('id')->on('users');
+
+
+            $table->foreign('expense_request_id')->references('id')->on('expense_requests')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

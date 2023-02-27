@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\v1\AuthController;
-use App\Http\Controllers\v1\CompOffRequestController;
-use App\Http\Controllers\v1\ExpenceRequestController;
+use App\Http\Controllers\V1\AuthController;
+use App\Http\Controllers\V1\CompOffRequestController;
+use App\Http\Controllers\V1\ExpenseRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +17,7 @@ use App\Http\Controllers\v1\ExpenceRequestController;
 */
 
 
-Route::prefix('v1')->group(function () {
+Route::prefix('V1')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
     Route::middleware('auth:sanctum')->group(function () {
@@ -25,15 +25,15 @@ Route::prefix('v1')->group(function () {
         Route::controller(CompOffRequestController::class)->prefix('compoff')->group(function () {
             Route::post('list',  'list');
             Route::post('create', 'create');
-            Route::get('view/{id}',  'view');
+            Route::get('get/{id}',  'get');
             Route::post('update/{id}', 'update');
             Route::post('delete/{id}', 'delete');
             Route::post('approval/{id}', 'approval');
         });
-        Route::controller(ExpenceRequestController::class)->prefix('expence')->group(function () {
+        Route::controller(ExpenseRequestController::class)->prefix('expense')->group(function () {
             Route::post('list',  'list');
             Route::post('create', 'create');
-            Route::get('view/{id}',  'view');
+            Route::get('get/{id}',  'get');
             Route::post('update/{id}', 'update');
             Route::post('delete/{id}', 'delete');
             Route::post('approval/{id}', 'approval');
