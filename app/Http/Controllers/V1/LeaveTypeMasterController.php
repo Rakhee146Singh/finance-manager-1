@@ -5,7 +5,6 @@ namespace App\Http\Controllers\V1;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\LeaveTypeMaster;
-use App\Http\Helpers\APIResponse;
 
 class LeaveTypeMasterController extends Controller
 {
@@ -41,7 +40,7 @@ class LeaveTypeMasterController extends Controller
         if ($request->perPage && $request->currentPage) {
             $perPage        = $request->perPage;
             $currentPage    = $request->currentPage;
-            $query         = $query->skip($perPage * ($currentPage - 1))->take($perPage);
+            $query          = $query->skip($perPage * ($currentPage - 1))->take($perPage);
         }
 
         /* Get records */
@@ -63,7 +62,7 @@ class LeaveTypeMasterController extends Controller
     public function create(Request $request)
     {
         $request->validate([
-            'name'      => 'required|string|max:50',
+            'name'      => 'required|alpha|max:50',
         ]);
         $leave = LeaveTypeMaster::create($request->only('name'));
         return ok('Leave created successfully!', $leave);
@@ -91,7 +90,7 @@ class LeaveTypeMasterController extends Controller
     {
         $leave = LeaveTypeMaster::findOrFail($id);
         $request->validate([
-            'name'    => 'required|string|max:50',
+            'name'    => 'required|alpha|max:50',
         ]);
         $leave->update($request->only('name'));
         return ok('Leave Updated successfully', $leave);

@@ -18,7 +18,7 @@ class FinancialYearController extends Controller
         $request->validate([
             'search'        => 'nullable|integer|digits:4',
             'sortOrder'     => 'nullable|in:asc,desc',
-            'sortField'     => 'nullable',
+            'sortField'     => 'nullable|string',
             'perPage'       => 'nullable|integer',
             'currentPage'   => 'nullable|integer'
         ]);
@@ -38,11 +38,11 @@ class FinancialYearController extends Controller
         if ($request->perPage && $request->currentPage) {
             $perPage        = $request->perPage;
             $currentPage    = $request->currentPage;
-            $query       = $query->skip($perPage * ($currentPage - 1))->take($perPage);
+            $query          = $query->skip($perPage * ($currentPage - 1))->take($perPage);
         }
         /* Get records */
-        $finances = $query->get();
-        $data = [
+        $finances   = $query->get();
+        $data       = [
             'count' => $count,
             'data'  => $finances
         ];
@@ -58,10 +58,28 @@ class FinancialYearController extends Controller
     public function create(Request $request)
     {
         $request->validate([
-            'year'          => 'required|max:' . (date('Y') + 1),
+            'year'          => 'required',
             'start_date'    => 'required|date_format:Y-m-d',
             'end_date'      => 'required_if:start_date,after_or_equal:start_date|date_format:Y-m-d',
         ]);
+
+        /** Validation for Year */
+        $year   = explode("-", $request->year);
+        $year1  = $year[0];
+        $year2  = $year[1];
+        if ($year1 + 1 != $year2) {
+            return 'Invalid Year';
+        }
+
+        /** Validation for Start and End date respect through year */
+        $start  = explode("-", $request->start_date);
+        $end    = explode("-", $request->end_date);
+        $start1 = $start[0];
+        $end1   = $end[0];
+        if ($year1 != $start1 || $year2 != $end1) {
+            return 'Invalid Date format';
+        }
+
         $finance = FinancialYear::create($request->only('year', 'start_date', 'end_date'));
         return ok('Finance created successfully!', $finance);
     }
@@ -88,10 +106,28 @@ class FinancialYearController extends Controller
     {
         $finance = FinancialYear::findOrFail($id);
         $request->validate([
-            'year'          => 'required|max:' . (date('Y') + 1),
+            'year'          => 'required',
             'start_date'    => 'required|date_format:Y-m-d',
             'end_date'      => 'required_if:start_date,after_or_equal:start_date|date_format:Y-m-d',
         ]);
+
+        /** Validation for Year */
+        $year   = explode("-", $request->year);
+        $year1  = $year[0];
+        $year2  = $year[1];
+        if ($year1 + 1 != $year2) {
+            return 'Enter Valid Year';
+        }
+
+        /** Validation for Start and End date respect through year */
+        $start  = explode("-", $request->start_date);
+        $end    = explode("-", $request->end_date);
+        $start1 = $start[0];
+        $end1   = $end[0];
+        if ($year1 != $start1 || $year2 != $end1) {
+            return 'Enter Valid date';
+        }
+
         $finance->update($request->only('year', 'start_date', 'end_date'));
         return ok('Finance updated successfully', $finance);
     }
